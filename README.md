@@ -56,6 +56,26 @@
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Round types
+
+Each `resources/rounds/*.jsonc` file defines one round type. `primaryWeapon` / `secondaryWeapon` give
+a fixed weapon, `usePreferredPrimary` / `usePreferredSecondary` use the player's `!guns` preference
+(random within the type when none is set). `primaryChoices` / `secondaryChoices` sit between the two:
+a list of weapons, the player gets their preference when it is one of them, else the first entry.
+
+```jsonc
+{
+  "name": "k4.rounds.m4",
+  "primaryChoices": ["weapon_m4a1", "weapon_m4a1_silencer"],
+  "secondaryChoices": ["weapon_usp_silencer", "weapon_hkp2000"],
+  "armor": true,
+  "helmet": true,
+  "health": 100
+}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- COMMANDS -->
 
 ## Commands

@@ -31,6 +31,8 @@ public sealed partial class Plugin
 		public CSWeaponType? PrimaryPreference { get; }
 		public bool UsePreferredPrimary { get; }
 		public bool UsePreferredSecondary { get; }
+		public IReadOnlyList<ItemDefinitionIndex> PrimaryChoices { get; } = [];
+		public IReadOnlyList<ItemDefinitionIndex> SecondaryChoices { get; } = [];
 
 		// special round only
 		public Action<IReadOnlyList<IPlayer>?, IReadOnlyList<IPlayer>?>? OnRoundStart { get; }
@@ -73,8 +75,16 @@ public sealed partial class Plugin
 			UsePreferredPrimary = config.UsePreferredPrimary;
 			UsePreferredSecondary = config.UsePreferredSecondary;
 			PrimaryPreference = config.GetPrimaryPreferenceType();
+			PrimaryChoices = ParseChoices(config.PrimaryChoices);
+			SecondaryChoices = ParseChoices(config.SecondaryChoices);
 			IsSpecialRound = false;
 		}
+
+		private static List<ItemDefinitionIndex> ParseChoices(List<string>? names) => names?
+			.Select(Weapons.ParseFromString)
+			.Where(w => w.HasValue)
+			.Select(w => w!.Value)
+			.ToList() ?? [];
 
 		/// <summary>From API config</summary>
 		public RoundType(SpecialRoundConfig config)

@@ -85,6 +85,16 @@ public sealed partial class Plugin
 		/// <summary>Fixed secondary weapon (null = use preference)</summary>
 		public string? SecondaryWeapon { get; set; }
 
+		/// <summary>
+		/// Primary picked from this list: the player's weapon preference when it is one of them,
+		/// else the first entry. For rounds like "M4" where the player may choose M4A4 or M4A1-S.
+		/// Takes precedence over PrimaryWeapon and UsePreferredPrimary.
+		/// </summary>
+		public List<string>? PrimaryChoices { get; set; }
+
+		/// <summary>Secondary picked from this list the same way (e.g. USP-S or P2000).</summary>
+		public List<string>? SecondaryChoices { get; set; }
+
 		/// <summary>Use player's preferred primary</summary>
 		public bool UsePreferredPrimary { get; set; }
 

@@ -138,10 +138,12 @@ public sealed partial class Plugin
 			// Determine whether this round needs any extra weapons beyond the knife.
 			bool needsPrimary = CurrentArena?.Id == -1
 				|| roundType.PrimaryWeapon != null
+				|| roundType.PrimaryChoices.Count > 0
 				|| roundType.UsePreferredPrimary;
 
 			bool needsSecondary = CurrentArena?.Id == -1
 				|| roundType.SecondaryWeapon != null
+				|| roundType.SecondaryChoices.Count > 0
 				|| roundType.UsePreferredSecondary;
 
 			if (!needsPrimary && !needsSecondary)
@@ -182,7 +184,13 @@ public sealed partial class Plugin
 				else
 				{
 					// primary weapon
-					if (roundType.PrimaryWeapon is { } primary)
+					if (roundType.PrimaryChoices.Count > 0)
+					{
+						var classname = Core.Helpers.GetClassnameByDefinitionIndex((int)PickChoice(roundType.PrimaryChoices));
+						if (!string.IsNullOrEmpty(classname))
+							itemServices.GiveItem(classname);
+					}
+					else if (roundType.PrimaryWeapon is { } primary)
 					{
 						var classname = Core.Helpers.GetClassnameByDefinitionIndex((int)primary);
 						if (!string.IsNullOrEmpty(classname))
@@ -199,7 +207,13 @@ public sealed partial class Plugin
 					}
 
 					// secondary weapon
-					if (roundType.SecondaryWeapon is { } secondary)
+					if (roundType.SecondaryChoices.Count > 0)
+					{
+						var classname = Core.Helpers.GetClassnameByDefinitionIndex((int)PickChoice(roundType.SecondaryChoices));
+						if (!string.IsNullOrEmpty(classname))
+							itemServices.GiveItem(classname);
+					}
+					else if (roundType.SecondaryWeapon is { } secondary)
 					{
 						var classname = Core.Helpers.GetClassnameByDefinitionIndex((int)secondary);
 						if (!string.IsNullOrEmpty(classname))
@@ -254,6 +268,18 @@ public sealed partial class Plugin
 					csItemServices.HasHelmetUpdated();
 				}
 			});
+		}
+
+		/// <summary>The player's preference when it is one of the choices, else the first one.</summary>
+		private ItemDefinitionIndex PickChoice(IReadOnlyList<ItemDefinitionIndex> choices)
+		{
+			foreach (var pref in WeaponPreferences.Values)
+			{
+				if (pref is { } p && choices.Contains(p))
+					return p;
+			}
+
+			return choices[0];
 		}
 
 		/// <summary>Teleports player to their assigned spawn</summary>
